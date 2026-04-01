@@ -4,6 +4,7 @@ Creating a Proxmox VE template for development and debugging. The [proxmox-iso](
 
 Template parameters:
 ```sh
+OS version: Proxmox 9.1.1
 CPU type: host
 Cores: 2
 Socket: 1
