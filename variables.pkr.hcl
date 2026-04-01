@@ -1,4 +1,7 @@
 locals {
+    build_name = "proxmox-9.1"
+    storage_pool_name = "local"
+
     output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 
     iso_url = "https://enterprise.proxmox.com/iso"

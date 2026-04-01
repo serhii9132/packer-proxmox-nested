@@ -1,2 +1,5 @@
 .env
+.ansible
+host_vars
+logs
 packer_cache
