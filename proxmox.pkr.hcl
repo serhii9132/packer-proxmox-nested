@@ -19,7 +19,8 @@ source "proxmox-iso" "pve" {
     node                      = var.pve_node_name
     task_timeout              = "15m"
 
-    vm_name                   = "proxmox-9.1"
+    vm_name                   = local.build_name
+    template_name             = "${local.build_name}-tmp"
     os                        = "l26"
     cpu_type                  = "host"
     cores                     = 2
@@ -28,11 +29,11 @@ source "proxmox-iso" "pve" {
     scsi_controller           = "virtio-scsi-single"
     serials                   = ["socket"]
     communicator              = "ssh"
-
+    qemu_agent                = true
     bios                      = "seabios"
 
     disks {
-        storage_pool            = "local"
+        storage_pool            = local.storage_pool_name
         disk_size               = "100G"
         format                  = "qcow2"
         io_thread               = true
@@ -48,7 +49,7 @@ source "proxmox-iso" "pve" {
     boot_iso {
         type                    = "scsi"
         iso_download_pve        = true
-        iso_storage_pool        = "local"
+        iso_storage_pool        = local.storage_pool_name
         iso_url                 = "${local.iso_url}/${local.iso_file}"
         iso_checksum            = "sha256:${local.iso_checksum}"
         unmount                 = true
@@ -58,7 +59,7 @@ source "proxmox-iso" "pve" {
         type                    = "scsi"
         cd_content              = local.unattended
         cd_label                = local.cd_files
-        iso_storage_pool        = "local"
+        iso_storage_pool        = local.storage_pool_name
         unmount                 = true
     }
 
@@ -79,4 +80,17 @@ source "proxmox-iso" "pve" {
 
 build {
     sources = ["sources.proxmox-iso.pve"]
+
+    provisioner "shell" {
+        inline = [
+            "apt install -y qemu-guest-agent"
+        ]
+    }
+
+    provisioner "ansible" {
+        playbook_file   = "provisioning/playbook.yaml"
+        galaxy_file     = "provisioning/requirements.yaml"
+        extra_arguments = [ "-vvv" ]
+        user            = "root"
+    }
 }

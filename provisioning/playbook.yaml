@@ -1,0 +1,19 @@
+---
+- name: Proxmox setup
+  hosts: default
+  gather_facts: true
+  roles:
+    - role: serhii9132.proxmox_bootstrap.storage
+      tags: storage
+    - role: serhii9132.proxmox_bootstrap.apt_repos
+      tags: apt_repos
+    - role: serhii9132.proxmox_bootstrap.nag_screen
+      tags: nag_screen
+    - role: serhii9132.base_layer.common
+      tags: common
+    - role: serhii9132.base_layer.utilities
+      tags: utilities
+    - role: serhii9132.proxmox_bootstrap.ssh
+      tags: ssh
+    - role: serhii9132.proxmox_bootstrap.accounts
+      tags: accounts
