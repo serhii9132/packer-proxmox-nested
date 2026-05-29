@@ -1,18 +1,18 @@
 packer {
   required_plugins {
     proxmox = {
-      version = "~> 1"
+      version = "1.2.3"
       source  = "github.com/hashicorp/proxmox"
     }
     ansible = {
       source  = "github.com/hashicorp/ansible"
-      version = "~> 1"
+      version = "1.1.4"
     }
   }
 }
 
 source "proxmox-iso" "pve" {
-    proxmox_url               = var.proxmox_url
+    proxmox_url               = var.pve_url
     insecure_skip_tls_verify  = true
     username                  = var.pve_username
     token                     = var.pve_token
@@ -33,7 +33,7 @@ source "proxmox-iso" "pve" {
     bios                      = "seabios"
 
     disks {
-        storage_pool            = local.storage_pool_name
+        storage_pool            = var.storage_pool_disks
         disk_size               = "100G"
         format                  = "qcow2"
         io_thread               = true
@@ -42,14 +42,14 @@ source "proxmox-iso" "pve" {
 
     network_adapters {
         model                   = "virtio"
-        bridge                  = "vmbr1"
-        vlan_tag                = "10"
+        bridge                  = var.nic_bridge
+        vlan_tag                = var.nic_vlan
     }
 
     boot_iso {
         type                    = "scsi"
         iso_download_pve        = true
-        iso_storage_pool        = local.storage_pool_name
+        iso_storage_pool        = var.storage_pool_iso
         iso_url                 = "${local.iso_url}/${local.iso_file}"
         iso_checksum            = "sha256:${local.iso_checksum}"
         unmount                 = true
@@ -59,20 +59,20 @@ source "proxmox-iso" "pve" {
         type                    = "scsi"
         cd_content              = local.unattended
         cd_label                = local.cd_files
-        iso_storage_pool        = local.storage_pool_name
+        iso_storage_pool        = var.storage_pool_iso
         unmount                 = true
     }
 
     ssh_host                  = var.ip
     ssh_username              = "root"
     ssh_private_key_file      = var.ssh_private_key_file
-    ssh_timeout               = "4m"
+    ssh_timeout               = "30m"
 
-    boot_wait                 = "10s"
+    boot_wait                 = "20s"
     boot_command = [
-        "<down><down><down><enter>",
-        "<down><down><down><enter>",
-        "<wait30s>",
+        "<down><down><down><enter><wait5s>",
+        "<down><down><down><down><down><enter>",
+        "<wait45s>",
         "proxmox-fetch-answer partition ${local.cd_files} > /run/automatic-installer-answers<enter><wait>exit<enter>",
         "<wait3m>"
     ]
@@ -82,7 +82,8 @@ build {
     sources = ["sources.proxmox-iso.pve"]
 
     provisioner "shell" {
-        inline = [
+        inline = [ 
+            "apt update && apt upgrade -y",
             "apt install -y qemu-guest-agent"
         ]
     }

@@ -3,7 +3,7 @@ LOG_DIR    		:= logs
 LOG_TIMESTAMP 	:= $(shell date +"%Y-%m-%d_%H-%M-%S")
 LOAD_ENV 		:= set -a; [ -f $(ENV_FILE) ] && . ./$(ENV_FILE); set +a
 
-.PHONY: all proxmox
+.PHONY: proxmox clean
 
 proxmox:
 	@mkdir -p $(LOG_DIR)

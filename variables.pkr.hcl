@@ -1,12 +1,9 @@
 locals {
     build_name = "proxmox-9.1"
-    storage_pool_name = "local"
-
-    output_directory = "builds/${formatdate("YYYY-MM-DD_hh-mm", timestamp())}"
 
     iso_url = "https://enterprise.proxmox.com/iso"
-    iso_file = "proxmox-ve_9.1-1.iso"
-    iso_checksum = "6d8f5afc78c0c66812d7272cde7c8b98be7eb54401ceb045400db05eb5ae6d22"
+    iso_file = "proxmox-ve_9.2-1.iso"
+    iso_checksum = "4e88fe416df9b527624a175f24c9aa07c714d3332afb1ee3dbf3879573ef2c6c"
 
     answer_filename = "answer.toml"
     cd_files = "cidata"
@@ -15,52 +12,62 @@ locals {
     }
 }
 
-variable "proxmox_url" {
+variable "pve_url" {
     type = string
-    default = env("PROXMOX_URL")
 }
 
 variable "pve_username" {
     type = string
-    default = env("PROXMOX_USER")
 }
 
 variable "pve_token" {
     type = string
-    default = env("PROXMOX_TOKEN")
 }
 
 variable "pve_node_name" {
     type = string
-    default = env("PROXMOX_NAME_NODE")
+}
+
+variable "storage_pool_disks" {
+    type = string
+    default = "local"
+}
+
+variable "storage_pool_iso" {
+    type = string
+    default = "local"
+}
+
+variable "nic_bridge" {
+  type = string
+  default = "vmbr0" 
+}
+
+variable "nic_vlan" {
+  type = string
+  default = null
 }
 
 variable "ssh_password" {
     type = string
-    default = env("PASSWORD")
 }
 
 variable "ssh_pub_key" {
     type = string
-    default = env("SSH_PUBLIC_KEY")
 }
 
 variable "ssh_private_key_file" {
     type = string
-    default = env("SSH_PRIVATE_KEY_FILE")
 }
 
 variable "ip" {
     type = string
-    default = env("IP")
 }
 
 variable "mask" {
     type = string
-    default = env("MASK")
 }
 
 variable "gateway" {
     type = string
-    default = env("GATEWAY")
 }
