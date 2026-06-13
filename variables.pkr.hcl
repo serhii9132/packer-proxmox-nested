@@ -1,5 +1,5 @@
 locals {
-    build_name = "proxmox-9.1"
+    build_name = "proxmox-9"
 
     iso_url = "https://enterprise.proxmox.com/iso"
     iso_file = "proxmox-ve_9.2-1.iso"
